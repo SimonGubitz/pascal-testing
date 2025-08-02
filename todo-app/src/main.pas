@@ -1,12 +1,15 @@
-program Calculator;
+program TodoApp;
 
+uses
+    SysUtils, Homepage;
 
 
 procedure Main;
 begin
 
-end;
+    InputDrawHomepage;
 
+end;
 
 begin
     try
@@ -14,7 +17,7 @@ begin
     except
         on E: Exception do
         begin
-            WriteLn('Error: ' + E.Message);
+            WriteLn('Error: ', E.Message);
         end;
     end;
 end.

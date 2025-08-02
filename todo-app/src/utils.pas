@@ -78,21 +78,19 @@ begin
     for i := 1 to Length(InputString) do
     begin
         if not((InputString[i] >= '0') and (InputString[i] <= '9')) then
+        begin
             Result := -1;
+            Exit;
+        end;
 
 
         digit := Ord(InputString[i]) - Ord('0');
-
-        WriteLn('InputString[i]: ', InputString[i]);
-        WriteLn('digit: ', digit);
 
         res := res * 10;
         res := res + digit;
 
 
     end;
-
-    WriteLn(res);
 
     Result := res;
 
@@ -115,7 +113,7 @@ begin
     if Length(yearString) <> 4 then
     begin
         InvalidInput(false);
-        CustomDateInput();
+        Exit(CustomDateInput());
     end
     else
     begin
@@ -123,7 +121,7 @@ begin
         if yearInt = -1 then
         begin
             InvalidInput(false);
-            CustomDateInput();
+            Exit(CustomDateInput());
         end;
     end;
 
@@ -133,21 +131,18 @@ begin
     Write('Please enter a max 2 digit month: ');
     ReadLn(monthString);
 
-    WriteLn('monthly string length: ', Length(monthString));
-
     if (Length(monthString) > 2) or (Length(monthString) < 1) then
     begin
         InvalidInput(false);
-        CustomDateInput();
+        Exit(CustomDateInput());
     end
     else
     begin
         monthInt := Atoi(monthString);
-        Write('after atoi: ', monthInt);
         if (monthInt < 1) or (monthInt > 12) then
         begin
             InvalidInput(false);
-            CustomDateInput();
+            Exit(CustomDateInput());
         end;
     end;
 
@@ -163,7 +158,7 @@ begin
                 monthlyMaxDays := 28;
         else
             InvalidInput(false);
-            CustomDateInput();
+            Exit(CustomDateInput());
     end;
 
 
@@ -175,7 +170,7 @@ begin
     if (Length(dayString) > 2) or (Length(dayString) < 1) then
     begin
         InvalidInput(false);
-        CustomDateInput();
+        Exit(CustomDateInput());
     end
     else
     begin
@@ -183,7 +178,7 @@ begin
         if (dayInt < 1) or (dayInt > monthlyMaxDays) then
         begin
             InvalidInput(false);
-            CustomDateInput();
+            Exit(CustomDateInput());
         end;
     end;
 
