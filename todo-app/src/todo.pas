@@ -96,7 +96,8 @@ begin
     end
     else
     begin
-        // add to be able to add tasks;
+        SetLength(options, 2);
+        options
     end;
 
 end;
