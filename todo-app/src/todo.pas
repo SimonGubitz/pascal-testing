@@ -102,6 +102,8 @@ begin
     begin
         ClearTerminal;
         WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+        DrawEmptyLines(1);
+        WriteLn('Press any button to go back home...');
         ReadLn;
         InputDrawHomepage;
     end;
@@ -135,6 +137,8 @@ begin
             begin
                 ClearTerminal;
                 WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+                DrawEmptyLines(1);
+                WriteLn('Press any button to go back home...');
                 ReadLn;
                 InputDrawHomepage;
             end;
@@ -193,6 +197,9 @@ begin
                 else
                 begin
                     WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+                    DrawEmptyLines(1);
+                    WriteLn('Press any button to go back home...');
+                    ReadLn;
                     InputDrawHomepage;
                 end;
             end;
@@ -226,7 +233,12 @@ begin
             '1': InputShowLists;
             '2': InputAddList;
             '3': exit;
-            else WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+            else
+            begin
+                WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+                DrawEmptyLines(1);
+                WriteLn('Press any button to go back home...');
+            end;
         end;
     end
     else
