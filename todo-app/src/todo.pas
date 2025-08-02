@@ -18,12 +18,26 @@ end;
 var userInput: string;
 var lists: array of TList;
 
-// procedure ClearTerminal();
-// begin
-//     ClearScreen; // System.SysUtils.ClearScreen
-// end;
 
-function ValidateUserInput(numberOfOptions: Integer): boolean;
+
+procedure InputDrawHomepage; forward;
+
+procedure ClearTerminal();
+begin
+    Write(#27 + '[2J' + #27 + '[H');
+end;
+
+procedure DrawEmptyLines(AmountLines: Integer);
+var
+    i: Integer;
+begin
+    for i := 0 to AmountLines -1 do
+    begin
+        WriteLn('');
+    end;
+end;
+
+function ValidateUserInput(NumberOfOptions: Integer): Boolean;
 begin
 
     (*for i := 0 to Length(userInput) - 1 do
@@ -39,59 +53,110 @@ begin
 end;
 
 // Writes into Global "userInput"
-procedure DrawOptions(options: array of string);
+procedure DrawOptions(Options: array of string);
 var
     i: Integer;
 begin
-    WriteLn('\e[34m', 'Options:', '/e[0m');
+    WriteLn(#27 + '[34m', 'Options:' +  #27'[0m');
     for i := 0 to Length(options) -1 do
     begin
-        WriteLn('#', i, '     ', options[i]);
+        WriteLn('# ', i +1, '     ', options[i]);
     end;
-    WriteLn('Enter your selection: ');
+    Write('Enter your selection: ');
     ReadLn(userInput);
 end;
 
-procedure ShowLists();
+procedure ShowLists;
 var
     i: Integer;
-    options: array of string;
 begin
-    // clearTerminal();
 
     WriteLn('These are your Lists:');
 
-    for i := 0 to Length(lists) - 1 do
+    if Length(lists) >= 1 then
     begin
-        WriteLn('#', i, '   ', lists[i].ListName)
+        for i := 0 to Length(lists) - 1 do
+        begin
+            WriteLn('# ', i + 1, '   ', lists[i].ListName, '    ', lists[i].ListDescription);
+        end;
+    end
+    else
+    begin
+        WriteLn(#27'[38;5;88m' + 'You currently have no lists.' + #27'[0m');
+    end;
+end;
+
+procedure InputShowList;
+begin
+
+    ClearTerminal;
+    ShowLists;
+
+    Write('Which List do you want to view? Enter index: ');
+    ReadLn(userInput);
+
+    if (userInput >= '0') and (userInput <= '9') then
+    begin
+    end
+    else
+    begin
+        ClearTerminal;
+        WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+        ReadLn;
+        InputDrawHomepage;
     end;
 
-    SetLength(options, 3);
+    ClearTerminal;
+
+end;
+
+procedure InputShowLists;
+var
+    options: array of string;
+begin
+
+    ClearTerminal;
+
+    ShowLists;
+
+    SetLength(options, 2);
     options[0] := 'View List';
-    options[1] := 'second';
-    options[2] := 'third';
+    options[1] := 'Go back Home';
+
+    DrawEmptyLines(2);
 
     DrawOptions(options);
     if ValidateUserInput(Length(options)-1) then
     begin
         case userInput[1] of
-            '1':
+            '1': InputShowList;
+            '2': InputDrawHomepage;
+            else
             begin
-                // do something here
-                WriteLn('case 1 selected');
+                ClearTerminal;
+                WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+                ReadLn;
+                InputDrawHomepage;
             end;
         end;
     end;
 end;
 
-procedure AddList();
+procedure AddList(newList: TList);
+begin
+    SetLength(lists, Length(lists) + 1);
+    lists[Length(lists)-1] := newList;
+end;
+
+procedure InputAddList;
 var
     listName: string;
     listDescription: string;
     newList: TList;
+    options: array of string;
 begin
 
-    // ClearTerminal();
+    ClearTerminal;
 
     WriteLn('What should be the name of the list?');
     ReadLn(listName);
@@ -102,53 +167,72 @@ begin
     newList.ListName := listName;
     newList.ListDescription := listDescription;
 
-    SetLength(lists, Length(lists));
-    lists[Length(lists)-1] := newList;
+    ClearTerminal;
 
-    ShowLists();
+    WriteLn('You Created list with name: ', newList.ListName);
+    AddList(newList);
+
+    ShowLists;
+
+    DrawEmptyLines(2);
+
+
+
+    SetLength(options, 2);
+    options[0] := 'Add another List';
+    options[1] := 'Go back Home';
+    DrawOptions(options);
+
+    if Length(userInput) >= 1 then
+    begin
+        if (userInput[1] >= '0') and (userInput[1] <= '9') then
+        begin
+            case userInput[1] of
+                '1': InputAddList;
+                '2': InputDrawHomepage;
+                else
+                begin
+                    WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+                    InputDrawHomepage;
+                end;
+            end;
+        end;
+    end;
+
 end;
 
 
 procedure AddTaskToList(var list: TList; listText: string);
 begin
     // List is not an array
-    SetLength(list.ListEntities, Length(List.ListEntities));
+    SetLength(list.ListEntities, Length(List.ListEntities) + 1);
 end;
 
-procedure DrawHomepage();
+procedure InputDrawHomepage;
 var
     options: array of string;
 begin
+
+    ClearTerminal;
 
     SetLength(options, 3);
     options[0] := 'View Lists';
     options[1] := 'Add a List';
     options[2] := 'Exit Program';
     DrawOptions(options);
-    ReadLn(userInput);
     if (Length(userInput) <= 1) then
     begin
         case userInput[1] of
-            '1':
-            begin
-                ShowLists();
-            end;
-            '2':
-            begin
-                AddList();
-            end;
-            '3':
-            begin
-                exit;
-            end;
-            else
-                WriteLn('Input outside the scope of selection possibilities.');
-            end;
+            '1': InputShowLists;
+            '2': InputAddList;
+            '3': exit;
+            else WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+        end;
     end
     else
     begin
-        WriteLn('Invalid Input');
-        DrawHomepage();
+        WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+        InputDrawHomepage;
     end;
 
 end;
@@ -157,6 +241,6 @@ end;
 
 begin
 
-    DrawHomepage();
+    InputDrawHomepage;
 
 end.
