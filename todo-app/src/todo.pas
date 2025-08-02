@@ -15,11 +15,12 @@ type TList = record
     ListEntities: array of TListEntity;
 end;
 
-var userInput: string;
 var lists: array of TList;
+var userInput: string;
 
 
 
+procedure ShowLists; forward;
 procedure InputDrawHomepage; forward;
 
 procedure ClearTerminal();
@@ -66,6 +67,87 @@ begin
     ReadLn(userInput);
 end;
 
+procedure ShowList(ListIndex: Integer);
+var
+    i: Integer;
+    list: TList;
+    tickedChar: string;
+begin
+
+    WriteLn('got to ShowList');
+
+    list := lists[ListIndex]; // should be safe due to previous checking if that list exists
+
+    WriteLn('okay it was safe huh');
+
+
+
+    if Length(list.ListEntities) >= 1 then
+    begin
+        for i := 0 to Length(list.ListEntities) do
+        begin
+
+            tickedChar := '✓';
+            if list.ListEntities[i].EntityTicked = false then tickedChar := '☐';
+
+            WriteLn(tickedChar + ' ', i +1, '     ', list.ListEntities[i].EntityText + '    ' + DateTimeToStr(list.ListEntities[i].EntityDate));
+
+        end;
+    end
+    else
+    begin
+        // add to be able to add tasks;
+    end;
+
+end;
+
+procedure InputShowList;
+var
+    atoi: Integer;
+    // listEntities: array of TListEntity;
+begin
+
+    ClearTerminal;
+    ShowLists;
+
+    Write('Which List do you want to view? Enter index: ');
+    ReadLn(userInput);
+
+    if (userInput[1] >= '0') and (userInput[1] <= '9') then
+    begin
+
+        WriteLn('got here');
+        atoi := Ord(userInput[1]) - Ord('0');
+        WriteLn('atoi: ', atoi);
+
+        if atoi > Length(lists) then
+        begin
+            ClearTerminal;
+            WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+            DrawEmptyLines(1);
+            WriteLn('Press any button to go back home...');
+            ReadLn;
+            InputDrawHomepage;
+        end
+        else
+        begin
+            ShowList(atoi - 1);
+        end;
+    end
+    else
+    begin
+        ClearTerminal;
+        WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
+        DrawEmptyLines(1);
+        WriteLn('Press any button to go back home...');
+        ReadLn;
+        InputDrawHomepage;
+    end;
+
+    ClearTerminal;
+
+end;
+
 procedure ShowLists;
 var
     i: Integer;
@@ -84,32 +166,6 @@ begin
     begin
         WriteLn(#27'[38;5;88m' + 'You currently have no lists.' + #27'[0m');
     end;
-end;
-
-procedure InputShowList;
-begin
-
-    ClearTerminal;
-    ShowLists;
-
-    Write('Which List do you want to view? Enter index: ');
-    ReadLn(userInput);
-
-    if (userInput >= '0') and (userInput <= '9') then
-    begin
-    end
-    else
-    begin
-        ClearTerminal;
-        WriteLn(#27'[38;5;88m' + 'That was an invalid input.' + #27'[0m');
-        DrawEmptyLines(1);
-        WriteLn('Press any button to go back home...');
-        ReadLn;
-        InputDrawHomepage;
-    end;
-
-    ClearTerminal;
-
 end;
 
 procedure InputShowLists;
