@@ -9,13 +9,13 @@ begin
 
     InputDrawHomepage;
 
-end;
+end; 
 
 begin
     try
         Main;
     except
-        on E: Exception do
+        on E:   do
         begin
             WriteLn('Error: ', E.Message);
         end;
